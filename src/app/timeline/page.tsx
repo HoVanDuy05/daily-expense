@@ -15,9 +15,11 @@ export default function TimelinePage() {
 
   const handleSubmit = async (data: {
     amount: number;
+    type: 'income' | 'expense';
     category: ExpenseCategory;
     note: string;
-    image: string | null;
+    image: string;
+    collaborators: string[];
   }) => {
     await addExpense(data);
     setFormOpen(false);
@@ -45,8 +47,8 @@ export default function TimelinePage() {
       ) : (
         <Box>
           {dailyGroups.map((dailyExpense) => (
-            <DailyGroup 
-              key={dailyExpense.date} 
+            <DailyGroup
+              key={dailyExpense.date}
               dailyExpense={dailyExpense}
             />
           ))}
