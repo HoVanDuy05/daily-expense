@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { BottomNavigation, BottomNavigationAction, Paper, Fab, Box } from '@mui/material';
 import {
   IconHome,
@@ -20,10 +21,10 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
   const pathname = usePathname();
 
   const getValue = () => {
-    if (pathname === '/') return 0;
-    if (pathname === '/timeline') return 1;
-    if (pathname === '/friends') return 3;
-    if (pathname === '/summary') return 4;
+    if (pathname === '/' || pathname.startsWith('/home')) return 0;
+    if (pathname.startsWith('/timeline')) return 1;
+    if (pathname.startsWith('/friends')) return 3;
+    if (pathname.startsWith('/summary')) return 4;
     return 0;
   };
 
@@ -32,17 +33,6 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
   useEffect(() => {
     setValue(getValue());
   }, [pathname]);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    if (newValue === 2) return; // Camera button
-    setValue(newValue);
-    switch (newValue) {
-      case 0: router.push('/'); break;
-      case 1: router.push('/timeline'); break;
-      case 3: router.push('/friends'); break;
-      case 4: router.push('/summary'); break;
-    }
-  };
 
   return (
     <Paper
@@ -60,7 +50,6 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
     >
       <BottomNavigation
         value={value}
-        onChange={handleChange}
         showLabels
         sx={{
           height: 70,
@@ -88,14 +77,20 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
           },
         }}
       >
-        <BottomNavigationAction
-          label="Trang chủ"
-          icon={<IconHome size={22} />}
-        />
-        <BottomNavigationAction
-          label="Lịch sử"
-          icon={<IconCalendar size={22} />}
-        />
+        <Link href="/" passHref legacyBehavior>
+          <BottomNavigationAction
+            label="Trang chủ"
+            icon={<IconHome size={22} />}
+            component="a"
+          />
+        </Link>
+        <Link href="/timeline" passHref legacyBehavior>
+          <BottomNavigationAction
+            label="Lịch sử"
+            icon={<IconCalendar size={22} />}
+            component="a"
+          />
+        </Link>
 
         {/* Camera Button in center */}
         <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', top: -20 }}>
@@ -118,14 +113,20 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
           </Fab>
         </Box>
 
-        <BottomNavigationAction
-          label="Bạn bè"
-          icon={<IconUsers size={22} />}
-        />
-        <BottomNavigationAction
-          label="Thống kê"
-          icon={<IconChartBar size={22} />}
-        />
+        <Link href="/friends" passHref legacyBehavior>
+          <BottomNavigationAction
+            label="Bạn bè"
+            icon={<IconUsers size={22} />}
+            component="a"
+          />
+        </Link>
+        <Link href="/summary" passHref legacyBehavior>
+          <BottomNavigationAction
+            label="Thống kê"
+            icon={<IconChartBar size={22} />}
+            component="a"
+          />
+        </Link>
       </BottomNavigation>
     </Paper>
   );
