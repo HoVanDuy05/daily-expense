@@ -22,21 +22,21 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
   const getValue = () => {
     if (pathname === '/') return 0;
     if (pathname === '/timeline') return 1;
-    if (pathname === '/friends') return 2;
-    if (pathname === '/summary') return 3;
+    if (pathname === '/friends') return 3;
+    if (pathname === '/summary') return 4;
     return 0;
   };
 
   const [value, setValue] = useState(getValue());
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    if (newValue === 4) return; // Camera button
+    if (newValue === 2) return; // Camera button
     setValue(newValue);
     switch (newValue) {
       case 0: router.push('/'); break;
       case 1: router.push('/timeline'); break;
-      case 2: router.push('/friends'); break;
-      case 3: router.push('/summary'); break;
+      case 3: router.push('/friends'); break;
+      case 4: router.push('/summary'); break;
     }
   };
 
@@ -73,7 +73,7 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
           },
           '& .Mui-selected': {
             color: 'primary.main',
-            '& .MuiSvgIcon-root': {
+            '& svg': {
               bgcolor: 'primary.main',
               color: 'white',
               borderRadius: '20px',
