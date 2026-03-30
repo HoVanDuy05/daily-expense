@@ -50,6 +50,7 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
     >
       <BottomNavigation
         value={value}
+        onChange={(event, newValue) => setValue(newValue)}
         showLabels
         sx={{
           height: 70,
@@ -77,20 +78,16 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
           },
         }}
       >
-        <Link href="/" passHref legacyBehavior>
-          <BottomNavigationAction
-            label="Trang chủ"
-            icon={<IconHome size={22} />}
-            component="a"
-          />
-        </Link>
-        <Link href="/timeline" passHref legacyBehavior>
-          <BottomNavigationAction
-            label="Lịch sử"
-            icon={<IconCalendar size={22} />}
-            component="a"
-          />
-        </Link>
+        <BottomNavigationAction
+          label="Trang chủ"
+          icon={<IconHome size={22} />}
+          onClick={() => router.push('/')}
+        />
+        <BottomNavigationAction
+          label="Lịch sử"
+          icon={<IconCalendar size={22} />}
+          onClick={() => router.push('/timeline')}
+        />
 
         {/* Camera Button in center */}
         <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', top: -20 }}>
@@ -113,20 +110,16 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
           </Fab>
         </Box>
 
-        <Link href="/friends" passHref legacyBehavior>
-          <BottomNavigationAction
-            label="Bạn bè"
-            icon={<IconUsers size={22} />}
-            component="a"
-          />
-        </Link>
-        <Link href="/summary" passHref legacyBehavior>
-          <BottomNavigationAction
-            label="Thống kê"
-            icon={<IconChartBar size={22} />}
-            component="a"
-          />
-        </Link>
+        <BottomNavigationAction
+          label="Bạn bè"
+          icon={<IconUsers size={22} />}
+          onClick={() => router.push('/friends')}
+        />
+        <BottomNavigationAction
+          label="Thống kê"
+          icon={<IconChartBar size={22} />}
+          onClick={() => router.push('/summary')}
+        />
       </BottomNavigation>
     </Paper>
   );

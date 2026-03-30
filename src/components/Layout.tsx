@@ -78,7 +78,7 @@ export default function Layout({
   };
 
   const handleChatList = () => {
-    router.push('/friends');
+    router.push('/messages');
   };
 
   // Don't show header on chat pages

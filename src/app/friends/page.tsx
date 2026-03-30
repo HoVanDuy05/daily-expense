@@ -16,14 +16,18 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Chip,
   Badge,
-  Divider,
+  Paper,
+  InputAdornment,
+  Chip,
 } from '@mui/material';
 import {
   IconMessageCircle,
   IconUserPlus,
   IconSearch,
+  IconCheck,
+  IconX,
+  IconUser,
 } from '@tabler/icons-react';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -56,140 +60,243 @@ export default function FriendsPage() {
   return (
     <ProtectedRoute>
       <Layout title="Bạn bè">
-        {/* Search and Add Friend */}
-        <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Tìm bạn bè..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: <IconSearch size={18} style={{ marginRight: 8 }} />,
+        <Box sx={{ px: 2, py: 2 }}>
+          {/* Search and Add Friend */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              mb: 3,
+              borderRadius: 3,
+              bgcolor: 'background.paper',
+              display: 'flex',
+              gap: 1.5,
+              alignItems: 'center',
             }}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-          />
-          <Button
-            variant="contained"
-            startIcon={<IconUserPlus size={18} />}
-            onClick={() => setShowAddDialog(true)}
-            sx={{ borderRadius: 2, px: 2 }}
           >
-            Thêm
-          </Button>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Tìm bạn bè..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch size={20} color="#9e9e9e" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2.5,
+                  bgcolor: 'grey.50',
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => setShowAddDialog(true)}
+              sx={{
+                borderRadius: 2.5,
+                minWidth: 44,
+                height: 44,
+                px: 0,
+                bgcolor: 'primary.main',
+                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+              }}
+            >
+              <IconUserPlus size={22} />
+            </Button>
+          </Paper>
+
+          {/* Friend Requests */}
+          {requests.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600, px: 0.5 }}>
+                Lời mời kết bạn
+                <Chip
+                  label={requests.length}
+                  size="small"
+                  color="primary"
+                  sx={{ ml: 1, height: 22, fontSize: '0.75rem', fontWeight: 600 }}
+                />
+              </Typography>
+              <Paper elevation={0} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                <List sx={{ p: 0 }}>
+                  {requests.map((request, index) => (
+                    <ListItem
+                      key={request.id}
+                      sx={{
+                        py: 1.5,
+                        px: 2,
+                        borderBottom: index < requests.length - 1 ? '1px solid' : 'none',
+                        borderColor: 'divider',
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar
+                          src={request.from_user_avatar}
+                          sx={{ width: 48, height: 48, bgcolor: 'primary.main' }}
+                        >
+                          {request.from_user_name.charAt(0)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Typography fontWeight={600} fontSize="0.95rem">
+                            {request.from_user_name}
+                          </Typography>
+                        }
+                        secondary="Muốn kết bạn với bạn"
+                      />
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => acceptFriendRequest(request.id)}
+                          sx={{
+                            bgcolor: 'success.main',
+                            color: 'white',
+                            width: 36,
+                            height: 36,
+                            '&:hover': { bgcolor: 'success.dark' },
+                          }}
+                        >
+                          <IconCheck size={18} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => rejectFriendRequest(request.id)}
+                          sx={{
+                            bgcolor: 'grey.200',
+                            color: 'grey.600',
+                            width: 36,
+                            height: 36,
+                            '&:hover': { bgcolor: 'grey.300' },
+                          }}
+                        >
+                          <IconX size={18} />
+                        </IconButton>
+                      </Box>
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Box>
+          )}
+
+          {/* Friends List */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600, px: 0.5 }}>
+              Bạn bè ({filteredFriends.length})
+            </Typography>
+
+            <Paper elevation={0} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+              <List sx={{ p: 0 }}>
+                {filteredFriends.length === 0 ? (
+                  <ListItem sx={{ py: 4, textAlign: 'center', display: 'block' }}>
+                    <Box
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        bgcolor: 'grey.100',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mx: 'auto',
+                        mb: 2,
+                      }}
+                    >
+                      <IconUser size={36} color="#bdbdbd" />
+                    </Box>
+                    <Typography variant="h6" color="text.secondary" gutterBottom fontWeight={500}>
+                      Chưa có bạn bè
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Thêm bạn bè để bắt đầu trò chuyện
+                    </Typography>
+                  </ListItem>
+                ) : (
+                  filteredFriends.map((friend, index) => (
+                    <ListItem
+                      key={friend.id}
+                      onClick={() => handleChatClick(friend.friend_id)}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: 'grey.50' },
+                        py: 1.5,
+                        px: 2,
+                        borderBottom: index < filteredFriends.length - 1 ? '1px solid' : 'none',
+                        borderColor: 'divider',
+                        transition: 'background-color 0.2s',
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          variant="dot"
+                          sx={{
+                            '& .MuiBadge-badge': {
+                              bgcolor: '#4caf50',
+                              width: 12,
+                              height: 12,
+                              borderRadius: '50%',
+                              border: '2px solid white',
+                            },
+                          }}
+                        >
+                          <Avatar
+                            src={friend.friend_avatar}
+                            sx={{ width: 52, height: 52, bgcolor: 'primary.main' }}
+                          >
+                            {friend.friend_name.charAt(0)}
+                          </Avatar>
+                        </Badge>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Typography fontWeight={600} fontSize="0.95rem">
+                            {friend.friend_name}
+                          </Typography>
+                        }
+                        secondary="Đang hoạt động"
+                        secondaryTypographyProps={{
+                          fontSize: '0.85rem',
+                          color: 'success.main',
+                        }}
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                          width: 40,
+                          height: 40,
+                          boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                          '&:hover': { bgcolor: 'primary.dark' },
+                        }}
+                      >
+                        <IconMessageCircle size={20} />
+                      </IconButton>
+                    </ListItem>
+                  ))
+                )}
+              </List>
+            </Paper>
+          </Box>
         </Box>
 
-        {/* Friend Requests */}
-        {requests.length > 0 && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-              Lời mời kết bạn ({requests.length})
-            </Typography>
-            <List sx={{ bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1 }}>
-              {requests.map((request) => (
-                <ListItem key={request.id} divider>
-                  <ListItemAvatar>
-                    <Avatar src={request.from_user_avatar} sx={{ width: 40, height: 40 }}>
-                      {request.from_user_name.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={request.from_user_name}
-                    secondary="Muốn kết bạn với bạn"
-                    primaryTypographyProps={{ fontWeight: 500 }}
-                  />
-                  <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => acceptFriendRequest(request.id)}
-                      sx={{ color: 'success.main' }}
-                    >
-                      <IconMessageCircle size={18} />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => rejectFriendRequest(request.id)}
-                      sx={{ color: 'error.main' }}
-                    >
-                      <IconUserPlus size={18} />
-                    </IconButton>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-
-        {/* Friends List */}
-        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-          Danh sách bạn bè ({filteredFriends.length})
-        </Typography>
-
-        <List sx={{ bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1 }}>
-          {filteredFriends.length === 0 ? (
-            <ListItem>
-              <ListItemText
-                primary="Chưa có bạn bè"
-                secondary="Thêm bạn bè để bắt đầu trò chuyện"
-                primaryTypographyProps={{ textAlign: 'center', color: 'text.secondary' }}
-                secondaryTypographyProps={{ textAlign: 'center' }}
-              />
-            </ListItem>
-          ) : (
-            filteredFriends.map((friend) => (
-              <ListItem
-                key={friend.id}
-                onClick={() => handleChatClick(friend.friend_id)}
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: 'action.hover' },
-                  px: 2,
-                  py: 1.5
-                }}
-                divider
-              >
-                <ListItemAvatar>
-                  <Badge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    variant="dot"
-                    sx={{ '& .MuiBadge-badge': { bgcolor: 'success.main' } }}
-                  >
-                    <Avatar src={friend.friend_avatar} sx={{ width: 44, height: 44 }}>
-                      {friend.friend_name.charAt(0)}
-                    </Avatar>
-                  </Badge>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={friend.friend_name}
-                  secondary="Đang hoạt động"
-                  primaryTypographyProps={{
-                    fontWeight: 600,
-                    fontSize: '0.95rem'
-                  }}
-                  secondaryTypographyProps={{
-                    fontSize: '0.8rem',
-                    color: 'success.main'
-                  }}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    '&:hover': { bgcolor: 'primary.dark' }
-                  }}
-                >
-                  <IconMessageCircle size={18} />
-                </IconButton>
-              </ListItem>
-            ))
-          )}
-        </List>
-
         {/* Add Friend Dialog */}
-        <Dialog open={showAddDialog} onClose={() => setShowAddDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Thêm bạn bè</DialogTitle>
+        <Dialog
+          open={showAddDialog}
+          onClose={() => setShowAddDialog(false)}
+          maxWidth="xs"
+          fullWidth
+          PaperProps={{ sx: { borderRadius: 3 } }}
+        >
+          <DialogTitle sx={{ pb: 1 }}>Thêm bạn bè</DialogTitle>
           <DialogContent>
             <TextField
               fullWidth
@@ -198,11 +305,20 @@ export default function FriendsPage() {
               value={newFriendEmail}
               onChange={(e) => setNewFriendEmail(e.target.value)}
               sx={{ mt: 1 }}
+              placeholder="Nhập email bạn bè..."
             />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowAddDialog(false)}>Hủy</Button>
-            <Button onClick={handleAddFriend} variant="contained">Gửi lời mời</Button>
+          <DialogActions sx={{ px: 3, pb: 2 }}>
+            <Button onClick={() => setShowAddDialog(false)} sx={{ borderRadius: 2 }}>
+              Hủy
+            </Button>
+            <Button
+              onClick={handleAddFriend}
+              variant="contained"
+              sx={{ borderRadius: 2, px: 3 }}
+            >
+              Gửi lời mời
+            </Button>
           </DialogActions>
         </Dialog>
       </Layout>

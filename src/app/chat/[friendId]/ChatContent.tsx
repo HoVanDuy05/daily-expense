@@ -10,10 +10,10 @@ import {
   TextField,
   Button,
   Paper,
-  List,
-  ListItem,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
-import { IconArrowLeft, IconSend } from '@tabler/icons-react';
+import { IconArrowLeft, IconSend, IconPhone, IconVideo } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useFriends } from '@/hooks/useFriends';
 import { Message } from '@/types/expense';
@@ -55,66 +55,77 @@ export default function ChatContent() {
 
   if (!friend) {
     return (
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography>Không tìm thấy bạn bè</Typography>
-        <Button variant="contained" onClick={() => router.push('/friends')} sx={{ mt: 2 }}>
-          Quay lại
-        </Button>
+      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+        <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
+          <Typography variant="h6" gutterBottom>Không tìm thấy bạn bè</Typography>
+          <Button variant="contained" onClick={() => router.push('/friends')} sx={{ mt: 2, borderRadius: 2 }}>
+            Quay lại
+          </Button>
+        </Paper>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f5f5f5' }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f0f2f5' }}>
       {/* Header */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'white',
-        }}
-      >
-        <IconButton onClick={() => router.push('/friends')}>
-          <IconArrowLeft size={24} />
-        </IconButton>
-        <Avatar src={friend.friend_avatar} sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
-          {friend.friend_name.charAt(0)}
-        </Avatar>
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" fontWeight={600}>
-            {friend.friend_name}
-          </Typography>
-          <Typography variant="caption" color="success.main">
-            Đang hoạt động
-          </Typography>
-        </Box>
-      </Paper>
+      <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', color: 'text.primary' }}>
+        <Toolbar sx={{ px: 2, minHeight: 64 }}>
+          <IconButton
+            edge="start"
+            onClick={() => router.push('/friends')}
+            sx={{ mr: 1, color: 'text.primary' }}
+          >
+            <IconArrowLeft size={24} />
+          </IconButton>
+
+          <Avatar
+            src={friend.friend_avatar}
+            sx={{ width: 44, height: 44, bgcolor: 'primary.main', mr: 2 }}
+          >
+            {friend.friend_name.charAt(0)}
+          </Avatar>
+
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle1" fontWeight={600} lineHeight={1.3}>
+              {friend.friend_name}
+            </Typography>
+            <Typography variant="caption" color="success.main" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4caf50' }} />
+              Đang hoạt động
+            </Typography>
+          </Box>
+
+          <IconButton sx={{ color: 'primary.main' }}>
+            <IconPhone size={22} />
+          </IconButton>
+          <IconButton sx={{ color: 'primary.main' }}>
+            <IconVideo size={22} />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
       {/* Messages */}
-      <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: '#f5f5f5' }}>
+      <Box sx={{ flex: 1, overflow: 'auto', p: 2, pb: 1 }}>
         {messages.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Box
+            <Paper
+              elevation={0}
               sx={{
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 borderRadius: '50%',
-                bgcolor: 'grey.200',
+                bgcolor: 'grey.100',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mx: 'auto',
-                mb: 2,
+                mb: 3,
               }}
             >
-              <IconArrowLeft size={32} color="#9e9e9e" />
-            </Box>
-            <Typography variant="h6" color="text.secondary" gutterBottom>
+              <IconSend size={40} color="#bdbdbd" />
+            </Paper>
+            <Typography variant="h6" color="text.secondary" gutterBottom fontWeight={500}>
               Chưa có tin nhắn
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -122,13 +133,14 @@ export default function ChatContent() {
             </Typography>
           </Box>
         ) : (
-          <Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {messages.map((message, index) => (
               <ChatMessage
                 key={message.id}
                 message={message}
                 isMe={message.sender_id !== friendId}
                 showAvatar={index === 0 || messages[index - 1].sender_id !== message.sender_id}
+                friendName={friend.friend_name}
               />
             ))}
             <div ref={messagesEndRef} />
@@ -138,11 +150,13 @@ export default function ChatContent() {
 
       {/* Input */}
       <Paper
-        elevation={0}
+        elevation={3}
         sx={{
-          p: 2,
+          p: 1.5,
+          px: 2,
           display: 'flex',
           gap: 1,
+          alignItems: 'center',
           borderTop: '1px solid',
           borderColor: 'divider',
           bgcolor: 'white',
@@ -155,49 +169,48 @@ export default function ChatContent() {
           onChange={(e) => setMessageText(e.target.value)}
           onKeyPress={handleKeyPress}
           multiline
-          maxRows={3}
+          maxRows={4}
           size="small"
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: 3,
+              bgcolor: 'grey.50',
+              px: 2,
+              py: 1,
             },
           }}
         />
-        <Button
-          variant="contained"
+        <IconButton
           onClick={handleSendMessage}
           disabled={!messageText.trim()}
           sx={{
-            minWidth: 48,
-            px: 0,
-            borderRadius: '50%',
-            width: 48,
-            height: 48,
-            bgcolor: 'primary.main',
+            width: 44,
+            height: 44,
+            bgcolor: messageText.trim() ? 'primary.main' : 'grey.300',
+            color: 'white',
+            borderRadius: 2,
+            transition: 'all 0.2s',
             '&:hover': {
-              bgcolor: 'primary.dark',
-            },
-            '&:disabled': {
-              bgcolor: 'grey.300',
+              bgcolor: messageText.trim() ? 'primary.dark' : 'grey.300',
             },
           }}
         >
           <IconSend size={20} />
-        </Button>
+        </IconButton>
       </Paper>
     </Box>
   );
 }
 
-function ChatMessage({ message, isMe, showAvatar }: { message: Message; isMe: boolean; showAvatar: boolean }) {
+function ChatMessage({ message, isMe, showAvatar, friendName }: { message: Message; isMe: boolean; showAvatar: boolean; friendName: string }) {
   return (
     <Box
       sx={{
         display: 'flex',
         justifyContent: isMe ? 'flex-end' : 'flex-start',
-        mb: 1,
         alignItems: 'flex-end',
-        gap: 0.5,
+        gap: 1,
+        mb: 0.5,
       }}
     >
       {/* Avatar for received messages */}
@@ -209,37 +222,42 @@ function ChatMessage({ message, isMe, showAvatar }: { message: Message; isMe: bo
             bgcolor: 'primary.main',
             fontSize: '0.875rem',
             visibility: showAvatar ? 'visible' : 'hidden',
+            flexShrink: 0,
           }}
         >
-          {message.sender_id?.charAt(message.sender_id.length - 1) || '?'}
+          {friendName.charAt(0)}
         </Avatar>
       )}
 
       {/* Message bubble */}
-      <Paper
-        sx={{
-          p: 2,
-          maxWidth: '70%',
-          bgcolor: isMe ? 'primary.main' : 'white',
-          color: isMe ? 'white' : 'text.primary',
-          borderRadius: 3,
-          borderTopLeftRadius: isMe ? 3 : 1,
-          borderTopRightRadius: isMe ? 1 : 3,
-          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-          wordBreak: 'break-word',
-        }}
-      >
-        <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
-          {message.content}
-        </Typography>
+      <Box sx={{ maxWidth: '70%' }}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 1.5,
+            px: 2,
+            bgcolor: isMe ? 'primary.main' : 'white',
+            color: isMe ? 'white' : 'text.primary',
+            borderRadius: 3,
+            borderBottomLeftRadius: isMe ? 3 : 0.5,
+            borderBottomRightRadius: isMe ? 0.5 : 3,
+            boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+            wordBreak: 'break-word',
+          }}
+        >
+          <Typography variant="body1" sx={{ lineHeight: 1.5, fontSize: '0.95rem' }}>
+            {message.content}
+          </Typography>
+        </Paper>
         <Typography
           variant="caption"
           sx={{
             display: 'block',
             mt: 0.5,
-            opacity: 0.7,
-            fontSize: '0.75rem',
+            color: isMe ? 'grey.500' : 'grey.400',
+            fontSize: '0.7rem',
             textAlign: isMe ? 'right' : 'left',
+            px: 0.5,
           }}
         >
           {new Date(message.created_at).toLocaleTimeString('vi-VN', {
@@ -247,18 +265,10 @@ function ChatMessage({ message, isMe, showAvatar }: { message: Message; isMe: bo
             minute: '2-digit',
           })}
         </Typography>
-      </Paper>
+      </Box>
 
-      {/* Avatar for sent messages (hidden) */}
-      {isMe && (
-        <Avatar
-          sx={{
-            width: 32,
-            height: 32,
-            visibility: 'hidden',
-          }}
-        />
-      )}
+      {/* Spacer for sent messages */}
+      {isMe && <Box sx={{ width: 32, flexShrink: 0 }} />}
     </Box>
   );
 }
