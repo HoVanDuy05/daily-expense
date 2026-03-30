@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { BottomNavigation, BottomNavigationAction, Paper, Fab, Box } from '@mui/material';
 import {
@@ -28,6 +28,10 @@ export default function BottomNav({ onCameraClick }: BottomNavProps) {
   };
 
   const [value, setValue] = useState(getValue());
+
+  useEffect(() => {
+    setValue(getValue());
+  }, [pathname]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue === 2) return; // Camera button

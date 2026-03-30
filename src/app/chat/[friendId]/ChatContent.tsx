@@ -65,7 +65,7 @@ export default function ChatContent() {
   }
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'grey.50' }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f5f5f5' }}>
       {/* Header */}
       <Paper
         elevation={0}
@@ -76,12 +76,13 @@ export default function ChatContent() {
           gap: 2,
           borderBottom: '1px solid',
           borderColor: 'divider',
+          bgcolor: 'white',
         }}
       >
         <IconButton onClick={() => router.push('/friends')}>
           <IconArrowLeft size={24} />
         </IconButton>
-        <Avatar src={friend.friend_avatar} sx={{ bgcolor: 'primary.main' }}>
+        <Avatar src={friend.friend_avatar} sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
           {friend.friend_name.charAt(0)}
         </Avatar>
         <Box sx={{ flex: 1 }}>
@@ -95,32 +96,56 @@ export default function ChatContent() {
       </Paper>
 
       {/* Messages */}
-      <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: '#f5f5f5' }}>
         {messages.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Typography color="text.secondary">
-              Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện!
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                bgcolor: 'grey.200',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mx: 'auto',
+                mb: 2,
+              }}
+            >
+              <IconArrowLeft size={32} color="#9e9e9e" />
+            </Box>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Chưa có tin nhắn
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Hãy bắt đầu cuộc trò chuyện với {friend.friend_name}
             </Typography>
           </Box>
         ) : (
-          <List>
-            {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} isMe={message.sender_id !== friendId} />
+          <Box>
+            {messages.map((message, index) => (
+              <ChatMessage
+                key={message.id}
+                message={message}
+                isMe={message.sender_id !== friendId}
+                showAvatar={index === 0 || messages[index - 1].sender_id !== message.sender_id}
+              />
             ))}
             <div ref={messagesEndRef} />
-          </List>
+          </Box>
         )}
       </Box>
 
       {/* Input */}
       <Paper
-        elevation={3}
+        elevation={0}
         sx={{
           p: 2,
           display: 'flex',
           gap: 1,
           borderTop: '1px solid',
           borderColor: 'divider',
+          bgcolor: 'white',
         }}
       >
         <TextField
@@ -132,12 +157,30 @@ export default function ChatContent() {
           multiline
           maxRows={3}
           size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 3,
+            },
+          }}
         />
         <Button
           variant="contained"
           onClick={handleSendMessage}
           disabled={!messageText.trim()}
-          sx={{ minWidth: 48, px: 0 }}
+          sx={{
+            minWidth: 48,
+            px: 0,
+            borderRadius: '50%',
+            width: 48,
+            height: 48,
+            bgcolor: 'primary.main',
+            '&:hover': {
+              bgcolor: 'primary.dark',
+            },
+            '&:disabled': {
+              bgcolor: 'grey.300',
+            },
+          }}
         >
           <IconSend size={20} />
         </Button>
@@ -146,34 +189,57 @@ export default function ChatContent() {
   );
 }
 
-function ChatMessage({ message, isMe }: { message: Message; isMe: boolean }) {
+function ChatMessage({ message, isMe, showAvatar }: { message: Message; isMe: boolean; showAvatar: boolean }) {
   return (
-    <ListItem
+    <Box
       sx={{
+        display: 'flex',
         justifyContent: isMe ? 'flex-end' : 'flex-start',
         mb: 1,
-        px: 0,
+        alignItems: 'flex-end',
+        gap: 0.5,
       }}
     >
+      {/* Avatar for received messages */}
+      {!isMe && (
+        <Avatar
+          sx={{
+            width: 32,
+            height: 32,
+            bgcolor: 'primary.main',
+            fontSize: '0.875rem',
+            visibility: showAvatar ? 'visible' : 'hidden',
+          }}
+        >
+          {message.sender_id?.charAt(message.sender_id.length - 1) || '?'}
+        </Avatar>
+      )}
+
+      {/* Message bubble */}
       <Paper
         sx={{
-          p: 1.5,
+          p: 2,
           maxWidth: '70%',
-          bgcolor: isMe ? 'primary.main' : 'background.paper',
+          bgcolor: isMe ? 'primary.main' : 'white',
           color: isMe ? 'white' : 'text.primary',
-          borderRadius: 2,
-          borderTopLeftRadius: isMe ? 2 : 0,
-          borderTopRightRadius: isMe ? 0 : 2,
+          borderRadius: 3,
+          borderTopLeftRadius: isMe ? 3 : 1,
+          borderTopRightRadius: isMe ? 1 : 3,
+          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+          wordBreak: 'break-word',
         }}
       >
-        <Typography variant="body2">{message.content}</Typography>
+        <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
+          {message.content}
+        </Typography>
         <Typography
           variant="caption"
           sx={{
             display: 'block',
             mt: 0.5,
             opacity: 0.7,
-            textAlign: 'right',
+            fontSize: '0.75rem',
+            textAlign: isMe ? 'right' : 'left',
           }}
         >
           {new Date(message.created_at).toLocaleTimeString('vi-VN', {
@@ -182,6 +248,17 @@ function ChatMessage({ message, isMe }: { message: Message; isMe: boolean }) {
           })}
         </Typography>
       </Paper>
-    </ListItem>
+
+      {/* Avatar for sent messages (hidden) */}
+      {isMe && (
+        <Avatar
+          sx={{
+            width: 32,
+            height: 32,
+            visibility: 'hidden',
+          }}
+        />
+      )}
+    </Box>
   );
 }
