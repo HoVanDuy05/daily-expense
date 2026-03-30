@@ -1,65 +1,181 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Grid,
+  LinearProgress,
+  Chip,
+  Button
+} from '@mui/material';
+import {
+  IconTrendingUp,
+  IconCalendar,
+  IconReceipt,
+  IconPlus
+} from '@tabler/icons-react';
+import Layout from '@/components/Layout';
+import ExpenseForm from '@/components/ExpenseForm';
+import ExpenseCard from '@/components/ExpenseCard';
+import { useExpenses } from '@/hooks/useExpenses';
+import { formatCurrency } from '@/lib/utils';
+import { EXPENSE_CATEGORIES, ExpenseCategory } from '@/types/expense';
+
+export default function HomePage() {
+  const [formOpen, setFormOpen] = useState(false);
+  const {
+    todayExpenses,
+    todayTotal,
+    monthTotal,
+    addExpense,
+    expenses
+  } = useExpenses();
+
+  const handleSubmit = async (data: {
+    amount: number;
+    type: 'income' | 'expense';
+    category: ExpenseCategory;
+    note: string;
+    image: string;
+    collaborators: string[];
+  }) => {
+    await addExpense(data);
+    setFormOpen(false);
+  };
+
+  const dailyBudget = 300000;
+  const dailyProgress = Math.min((todayTotal / dailyBudget) * 100, 100);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <Layout onCameraClick={() => setFormOpen(true)}>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid size={{ xs: 6 }}>
+          <Card sx={{ borderRadius: 3, height: '100%' }}>
+            <CardContent sx={{ p: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <IconReceipt size={20} color="#1976d2" />
+                <Typography variant="caption" color="text.secondary">
+                  Hôm nay
+                </Typography>
+              </Box>
+              <Typography variant="h5" fontWeight={700} color="error.main">
+                {formatCurrency(todayTotal)}
+              </Typography>
+              <Box sx={{ mt: 1 }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={dailyProgress}
+                  sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    bgcolor: 'grey.200',
+                    '& .MuiLinearProgress-bar': {
+                      bgcolor: dailyProgress > 80 ? 'error.main' : 'primary.main',
+                      borderRadius: 3,
+                    }
+                  }}
+                />
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                  {todayExpenses.length} giao dịch
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 6 }}>
+          <Card sx={{ borderRadius: 3, height: '100%' }}>
+            <CardContent sx={{ p: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <IconCalendar size={20} color="#1976d2" />
+                <Typography variant="caption" color="text.secondary">
+                  Tháng này
+                </Typography>
+              </Box>
+              <Typography variant="h5" fontWeight={700} color="primary.main">
+                {formatCurrency(monthTotal)}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                {expenses.length} giao dịch
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
+        Danh mục chi tiêu
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 3 }}>
+        {EXPENSE_CATEGORIES.slice(0, 4).map((cat) => {
+          const catExpenses = todayExpenses.filter(e => e.category === cat.id);
+          const catTotal = catExpenses.reduce((sum, e) => sum + e.amount, 0);
+          return (
+            <Chip
+              key={cat.id}
+              label={`${cat.label}: ${formatCurrency(catTotal)}`}
+              sx={{
+                bgcolor: cat.color + '20',
+                color: cat.color,
+                fontWeight: 500,
+                borderRadius: 2,
+              }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          );
+        })}
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          Giao dịch hôm nay
+        </Typography>
+        {todayExpenses.length > 0 && (
+          <Button
+            size="small"
+            startIcon={<IconPlus size={16} />}
+            onClick={() => setFormOpen(true)}
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            Thêm
+          </Button>
+        )}
+      </Box>
+
+      {todayExpenses.length === 0 ? (
+        <Card sx={{ borderRadius: 3, textAlign: 'center', py: 6 }}>
+          <CardContent>
+            <IconTrendingUp size={48} color="#bdbdbd" style={{ marginBottom: 16 }} />
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              Chưa có chi tiêu hôm nay
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Nhấn nút camera để thêm giao dịch đầu tiên
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<IconPlus size={18} />}
+              onClick={() => setFormOpen(true)}
+            >
+              Thêm chi tiêu
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Grid container spacing={2}>
+          {todayExpenses.map((expense) => (
+            <Grid size={{ xs: 6, sm: 4 }} key={expense.id}>
+              <ExpenseCard expense={expense} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      <ExpenseForm
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        onSubmit={handleSubmit}
+      />
+    </Layout>
   );
 }
