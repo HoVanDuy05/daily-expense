@@ -60,19 +60,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         try {
-          const response = await fetch('/api/auth/profile', {
+          const response = await fetch('http://localhost:8000/api/me', {
             headers: {
               'Authorization': `Bearer ${storedToken}`,
+              'Accept': 'application/json',
             },
           });
 
           if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
-            setToken(storedToken);
-            // Cache user data
-            localStorage.setItem('user', JSON.stringify(userData));
-            localStorage.setItem('userCacheTime', now.toString());
+            const data = await response.json();
+            if (data.success) {
+              setUser(data.data);
+              setToken(storedToken);
+              // Cache user data
+              localStorage.setItem('user', JSON.stringify(data.data));
+              localStorage.setItem('userCacheTime', now.toString());
+            } else {
+              // Token invalid, remove it
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('userCacheTime');
+            }
           } else {
             // Token invalid, remove it
             localStorage.removeItem('token');
@@ -96,50 +104,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        setToken(data.token);
-        setUser(data.user);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+      if (response.ok && data.success) {
+        setToken(data.data.token);
+        setUser(data.data.user);
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
         localStorage.setItem('userCacheTime', Date.now().toString());
         return { success: true };
       } else {
         return { success: false, message: data.message || 'Đăng nhập thất bại' };
       }
     } catch (error) {
-      return { success: false, message: 'Lỗi kết nối' };
+      return { success: false, message: 'Lỗi kết nối đến server' };
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('http://localhost:8000/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        return { success: true, message: 'Đăng ký thành công' };
+      if (response.ok && data.success) {
+        return { success: true, message: data.message || 'Đăng ký thành công' };
       } else {
         return { success: false, message: data.message || 'Đăng ký thất bại' };
       }
     } catch (error) {
-      return { success: false, message: 'Lỗi kết nối' };
+      return { success: false, message: 'Lỗi kết nối đến server' };
     }
   };
 
