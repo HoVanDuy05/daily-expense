@@ -1,11 +1,6 @@
 {
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
-  "/api/auth/forgot-password/route": "/api/auth/forgot-password",
-  "/api/auth/login/route": "/api/auth/login",
-  "/api/auth/profile/route": "/api/auth/profile",
-  "/api/auth/register/route": "/api/auth/register",
-  "/api/auth/reset-password/route": "/api/auth/reset-password",
   "/chat/[friendId]/page": "/chat/[friendId]",
   "/favicon.ico/route": "/favicon.ico",
   "/forgot-password/page": "/forgot-password",

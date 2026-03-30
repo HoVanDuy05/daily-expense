@@ -65,36 +65,6 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
-      "page": "/api/auth/forgot-password",
-      "regex": "^/api/auth/forgot\\-password(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/forgot\\-password(?:/)?$"
-    },
-    {
-      "page": "/api/auth/login",
-      "regex": "^/api/auth/login(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/login(?:/)?$"
-    },
-    {
-      "page": "/api/auth/profile",
-      "regex": "^/api/auth/profile(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/profile(?:/)?$"
-    },
-    {
-      "page": "/api/auth/register",
-      "regex": "^/api/auth/register(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/register(?:/)?$"
-    },
-    {
-      "page": "/api/auth/reset-password",
-      "regex": "^/api/auth/reset\\-password(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/auth/reset\\-password(?:/)?$"
-    },
-    {
       "page": "/favicon.ico",
       "regex": "^/favicon\\.ico(?:/)?$",
       "routeKeys": {},

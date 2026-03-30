@@ -1,9 +1,9 @@
 [
   {
     "route": "/summary",
-    "firstLoadUncompressedJsBytes": 1263101,
+    "firstLoadUncompressedJsBytes": 1263689,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0u1.hfr4bwpc3.js",
@@ -21,9 +21,9 @@
   },
   {
     "route": "/",
-    "firstLoadUncompressedJsBytes": 882649,
+    "firstLoadUncompressedJsBytes": 883237,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0j-vxd19t6p6g.js",
@@ -40,9 +40,9 @@
   },
   {
     "route": "/timeline",
-    "firstLoadUncompressedJsBytes": 858025,
+    "firstLoadUncompressedJsBytes": 858613,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0q5ivv_9xo4uc.js",
@@ -59,9 +59,9 @@
   },
   {
     "route": "/settings",
-    "firstLoadUncompressedJsBytes": 848674,
+    "firstLoadUncompressedJsBytes": 849262,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0kwzbkhcpm-0c.js",
@@ -77,9 +77,9 @@
   },
   {
     "route": "/friends",
-    "firstLoadUncompressedJsBytes": 819170,
+    "firstLoadUncompressedJsBytes": 819758,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0e5puawyg7-ch.js",
@@ -94,9 +94,9 @@
   },
   {
     "route": "/register",
-    "firstLoadUncompressedJsBytes": 776819,
+    "firstLoadUncompressedJsBytes": 777407,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0fmqvd-ngezsq.js",
@@ -110,9 +110,9 @@
   },
   {
     "route": "/forgot-password",
-    "firstLoadUncompressedJsBytes": 775943,
+    "firstLoadUncompressedJsBytes": 776531,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0m2h_v03o-4lp.js",
@@ -126,9 +126,9 @@
   },
   {
     "route": "/login",
-    "firstLoadUncompressedJsBytes": 775709,
+    "firstLoadUncompressedJsBytes": 776297,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\04i4u~hq_n1_8.js",
@@ -142,9 +142,9 @@
   },
   {
     "route": "/chat/[friendId]",
-    "firstLoadUncompressedJsBytes": 757714,
+    "firstLoadUncompressedJsBytes": 758302,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\0ki8l4rcss~8u.js",
@@ -158,9 +158,9 @@
   },
   {
     "route": "/_not-found",
-    "firstLoadUncompressedJsBytes": 668517,
+    "firstLoadUncompressedJsBytes": 669105,
     "firstLoadChunkPaths": [
-      "dist\\static\\chunks\\0xztpiox2ovcb.js",
+      "dist\\static\\chunks\\033slpowy36rz.js",
       "dist\\static\\chunks\\0t-get~dqngpm.js",
       "dist\\static\\chunks\\0n4z.7yu76je-.js",
       "dist\\static\\chunks\\00gq-v0e07i1q.js",

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_ENDPOINTS, DEFAULT_HEADERS } from '@/constants/api';
 
 interface User {
   id: string;
@@ -60,10 +61,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         try {
-          const response = await fetch('http://localhost:8000/api/me', {
+          const response = await fetch(API_ENDPOINTS.ME, {
             headers: {
               'Authorization': `Bearer ${storedToken}`,
-              'Accept': 'application/json',
+              ...DEFAULT_HEADERS,
             },
           });
 
@@ -104,12 +105,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/login', {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: DEFAULT_HEADERS,
         body: JSON.stringify({ email, password }),
       });
 
@@ -132,12 +130,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/register', {
+      const response = await fetch(API_ENDPOINTS.REGISTER, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: DEFAULT_HEADERS,
         body: JSON.stringify({ name, email, password }),
       });
 
