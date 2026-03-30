@@ -2,11 +2,13 @@ const CACHE_NAME = 'daily-expense-v1';
 const urlsToCache = [
   '/',
   '/timeline',
-  '/friends', 
+  '/friends',
   '/summary',
   '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/pwa-64x64.png',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+  '/maskable-icon-512x512.png'
 ];
 
 // Install event - cache resources
