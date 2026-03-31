@@ -13,10 +13,9 @@ import {
   AppBar,
   Toolbar,
 } from '@mui/material';
-import { IconArrowLeft, IconSend, IconPhone, IconVideo } from '@tabler/icons-react';
+import { IconArrowLeft, IconSend, IconPhone, IconVideo, IconInfoCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useFriends } from '@/hooks/useFriends';
-import { Message } from '@/types/expense';
 
 export default function ChatContent() {
   const router = useRouter();
@@ -58,7 +57,7 @@ export default function ChatContent() {
       <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
         <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
           <Typography variant="h6" gutterBottom>Không tìm thấy bạn bè</Typography>
-          <Button variant="contained" onClick={() => router.push('/friends')} sx={{ mt: 2, borderRadius: 2 }}>
+          <Button variant="contained" onClick={() => router.push('/messages')} sx={{ mt: 2, borderRadius: 2 }}>
             Quay lại
           </Button>
         </Paper>
@@ -66,14 +65,25 @@ export default function ChatContent() {
     );
   }
 
+  // Group messages by date for date separators
+  const getDateString = (date: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return 'Hôm nay';
+    if (date.toDateString() === yesterday.toDateString()) return 'Hôm qua';
+    return date.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'numeric' });
+  };
+
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f0f2f5' }}>
-      {/* Header */}
-      <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', color: 'text.primary' }}>
-        <Toolbar sx={{ px: 2, minHeight: 64 }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f0f5ff' }}>
+      {/* Header - Zalo style */}
+      <AppBar position="static" elevation={1} sx={{ bgcolor: 'white', color: 'text.primary' }}>
+        <Toolbar sx={{ px: 2, minHeight: 56 }}>
           <IconButton
             edge="start"
-            onClick={() => router.push('/friends')}
+            onClick={() => router.push('/messages')}
             sx={{ mr: 1, color: 'text.primary' }}
           >
             <IconArrowLeft size={24} />
@@ -81,78 +91,92 @@ export default function ChatContent() {
 
           <Avatar
             src={friend.friend_avatar}
-            sx={{ width: 44, height: 44, bgcolor: 'primary.main', mr: 2 }}
+            sx={{ width: 40, height: 40, bgcolor: 'primary.main', mr: 1.5 }}
           >
             {friend.friend_name.charAt(0)}
           </Avatar>
 
           <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1" fontWeight={600} lineHeight={1.3}>
+            <Typography variant="subtitle2" fontWeight={700} lineHeight={1.3}>
               {friend.friend_name}
             </Typography>
             <Typography variant="caption" color="success.main" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4caf50' }} />
+              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#00c853' }} />
               Đang hoạt động
             </Typography>
           </Box>
 
           <IconButton sx={{ color: 'primary.main' }}>
-            <IconPhone size={22} />
+            <IconPhone size={20} />
           </IconButton>
           <IconButton sx={{ color: 'primary.main' }}>
-            <IconVideo size={22} />
+            <IconVideo size={20} />
+          </IconButton>
+          <IconButton sx={{ color: 'text.secondary' }}>
+            <IconInfoCircle size={20} />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Messages */}
+      {/* Messages - Zalo style */}
       <Box sx={{ flex: 1, overflow: 'auto', p: 2, pb: 1 }}>
         {messages.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                width: 100,
-                height: 100,
-                borderRadius: '50%',
-                bgcolor: 'grey.100',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mx: 'auto',
-                mb: 3,
-              }}
-            >
-              <IconSend size={40} color="#bdbdbd" />
-            </Paper>
-            <Typography variant="h6" color="text.secondary" gutterBottom fontWeight={500}>
-              Chưa có tin nhắn
-            </Typography>
             <Typography variant="body2" color="text.secondary">
-              Hãy bắt đầu cuộc trò chuyện với {friend.friend_name}
+              Chưa có tin nhắn. Hãy gửi lời chào!
             </Typography>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {messages.map((message, index) => (
-              <ChatMessage
-                key={message.id}
-                message={message}
-                isMe={message.sender_id !== friendId}
-                showAvatar={index === 0 || messages[index - 1].sender_id !== message.sender_id}
-                friendName={friend.friend_name}
-              />
-            ))}
+            {messages.map((message, index) => {
+              const isMe = message.sender_id !== friendId;
+              const prevMessage = index > 0 ? messages[index - 1] : null;
+              const isFirstInGroup = !prevMessage || prevMessage.sender_id !== message.sender_id;
+              const isDifferentDate = prevMessage &&
+                new Date(prevMessage.created_at).toDateString() !== new Date(message.created_at).toDateString();
+
+              return (
+                <Box key={message.id}>
+                  {/* Date separator */}
+                  {(!prevMessage || isDifferentDate) && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          bgcolor: 'rgba(0,0,0,0.06)',
+                          color: 'text.secondary',
+                          px: 2,
+                          py: 0.5,
+                          borderRadius: 10,
+                          fontSize: '0.7rem',
+                          fontWeight: 500,
+                        }}
+                      >
+                        {getDateString(new Date(message.created_at))}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <ChatMessage
+                    message={message}
+                    isMe={isMe}
+                    showAvatar={isFirstInGroup && !isMe}
+                    friendName={friend.friend_name}
+                    friendAvatar={friend.friend_avatar}
+                  />
+                </Box>
+              );
+            })}
             <div ref={messagesEndRef} />
           </Box>
         )}
       </Box>
 
-      {/* Input */}
+      {/* Input - Zalo style */}
       <Paper
-        elevation={3}
+        elevation={2}
         sx={{
-          p: 1.5,
+          p: 1,
           px: 2,
           display: 'flex',
           gap: 1,
@@ -174,9 +198,10 @@ export default function ChatContent() {
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: 3,
-              bgcolor: 'grey.50',
+              bgcolor: 'grey.100',
               px: 2,
-              py: 1,
+              py: 0.8,
+              '& fieldset': { border: 'none' },
             },
           }}
         />
@@ -184,14 +209,14 @@ export default function ChatContent() {
           onClick={handleSendMessage}
           disabled={!messageText.trim()}
           sx={{
-            width: 44,
-            height: 44,
-            bgcolor: messageText.trim() ? 'primary.main' : 'grey.300',
-            color: 'white',
+            width: 40,
+            height: 40,
+            bgcolor: messageText.trim() ? 'primary.main' : 'transparent',
+            color: messageText.trim() ? 'white' : 'grey.400',
             borderRadius: 2,
             transition: 'all 0.2s',
             '&:hover': {
-              bgcolor: messageText.trim() ? 'primary.dark' : 'grey.300',
+              bgcolor: messageText.trim() ? 'primary.dark' : 'transparent',
             },
           }}
         >
@@ -202,25 +227,38 @@ export default function ChatContent() {
   );
 }
 
-function ChatMessage({ message, isMe, showAvatar, friendName }: { message: Message; isMe: boolean; showAvatar: boolean; friendName: string }) {
+function ChatMessage({
+  message,
+  isMe,
+  showAvatar,
+  friendName,
+  friendAvatar,
+}: {
+  message: any;
+  isMe: boolean;
+  showAvatar: boolean;
+  friendName: string;
+  friendAvatar?: string;
+}) {
   return (
     <Box
       sx={{
         display: 'flex',
         justifyContent: isMe ? 'flex-end' : 'flex-start',
         alignItems: 'flex-end',
-        gap: 1,
-        mb: 0.5,
+        gap: 0.8,
+        mb: 0.3,
       }}
     >
-      {/* Avatar for received messages */}
+      {/* Avatar - Zalo style: only show avatar for friend, first message in group */}
       {!isMe && (
         <Avatar
+          src={friendAvatar}
           sx={{
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             bgcolor: 'primary.main',
-            fontSize: '0.875rem',
+            fontSize: '0.75rem',
             visibility: showAvatar ? 'visible' : 'hidden',
             flexShrink: 0,
           }}
@@ -229,35 +267,36 @@ function ChatMessage({ message, isMe, showAvatar, friendName }: { message: Messa
         </Avatar>
       )}
 
-      {/* Message bubble */}
-      <Box sx={{ maxWidth: '70%' }}>
+      {/* Message bubble - Zalo style */}
+      <Box sx={{ maxWidth: '70%', display: 'flex', flexDirection: 'column' }}>
         <Paper
           elevation={0}
           sx={{
-            p: 1.5,
-            px: 2,
+            p: 1.2,
+            px: 1.5,
             bgcolor: isMe ? 'primary.main' : 'white',
             color: isMe ? 'white' : 'text.primary',
-            borderRadius: 3,
-            borderBottomLeftRadius: isMe ? 3 : 0.5,
-            borderBottomRightRadius: isMe ? 0.5 : 3,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+            borderRadius: 2,
+            borderBottomLeftRadius: isMe ? 2 : 0.5,
+            borderBottomRightRadius: isMe ? 0.5 : 2,
+            boxShadow: '0 0.5px 2px rgba(0,0,0,0.1)',
             wordBreak: 'break-word',
           }}
         >
-          <Typography variant="body1" sx={{ lineHeight: 1.5, fontSize: '0.95rem' }}>
+          <Typography variant="body2" sx={{ lineHeight: 1.4, fontSize: '0.9rem' }}>
             {message.content}
           </Typography>
         </Paper>
+
+        {/* Time - Zalo style: small, below message */}
         <Typography
           variant="caption"
           sx={{
-            display: 'block',
-            mt: 0.5,
-            color: isMe ? 'grey.500' : 'grey.400',
-            fontSize: '0.7rem',
-            textAlign: isMe ? 'right' : 'left',
-            px: 0.5,
+            mt: 0.3,
+            color: 'grey.400',
+            fontSize: '0.65rem',
+            alignSelf: isMe ? 'flex-end' : 'flex-start',
+            px: 0.3,
           }}
         >
           {new Date(message.created_at).toLocaleTimeString('vi-VN', {
@@ -266,9 +305,6 @@ function ChatMessage({ message, isMe, showAvatar, friendName }: { message: Messa
           })}
         </Typography>
       </Box>
-
-      {/* Spacer for sent messages */}
-      {isMe && <Box sx={{ width: 32, flexShrink: 0 }} />}
     </Box>
   );
 }
