@@ -1,4 +1,4 @@
-import ChatContent from './ChatContent';
+import ChatContent from '@/components/chat/ChatContent';
 import { FRIEND_IDS } from './static-params';
 
 // Required for static export with dynamic routes

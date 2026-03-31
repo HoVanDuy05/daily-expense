@@ -24,8 +24,8 @@ export default function ChatMessage({
         display: 'flex',
         justifyContent: isMe ? 'flex-end' : 'flex-start',
         alignItems: 'flex-end',
-        gap: 1,
-        mb: 0.5,
+        gap: 0.8,
+        mb: 0.3,
       }}
     >
       {/* Avatar - Zalo style: only show avatar for friend, first message in group */}
@@ -50,15 +50,12 @@ export default function ChatMessage({
         <Paper
           elevation={0}
           sx={{
-            p: 1.2,
-            px: 1.5,
+            p: 1.5,
+            px: 2,
             bgcolor: isMe ? 'primary.main' : 'white',
             color: isMe ? 'white' : 'text.primary',
-            borderRadius: 2,
-            // Zalo-style bubble tails
-            borderBottomLeftRadius: isMe ? 2 : 0.5,
-            borderBottomRightRadius: isMe ? 0.5 : 2,
-            boxShadow: '0 0.5px 2px rgba(0,0,0,0.1)',
+            borderRadius: 3,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
             wordBreak: 'break-word',
           }}
         >
@@ -66,7 +63,7 @@ export default function ChatMessage({
             {message.content}
           </Typography>
         </Paper>
-        
+
         {/* Time - Zalo style: small, below message */}
         <Typography
           variant="caption"
