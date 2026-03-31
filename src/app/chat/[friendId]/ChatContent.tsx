@@ -272,14 +272,14 @@ function ChatMessage({
         <Paper
           elevation={0}
           sx={{
-            p: 1.2,
-            px: 1.5,
+            p: 1.5,
+            px: 2,
             bgcolor: isMe ? 'primary.main' : 'white',
             color: isMe ? 'white' : 'text.primary',
-            borderRadius: 2,
-            borderBottomLeftRadius: isMe ? 2 : 0.5,
-            borderBottomRightRadius: isMe ? 0.5 : 2,
-            boxShadow: '0 0.5px 2px rgba(0,0,0,0.1)',
+            borderRadius: 2.5,
+            borderBottomLeftRadius: isMe ? 2.5 : 0.8,
+            borderBottomRightRadius: isMe ? 0.8 : 2.5,
+            boxShadow: '0 1px 2px rgba(0,0,0,0.12)',
             wordBreak: 'break-word',
           }}
         >
